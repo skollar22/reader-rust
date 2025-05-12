@@ -1,0 +1,8 @@
+[package]
+name = "reader-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+egui = "0.31.1"
+zip = "2.6.1"
