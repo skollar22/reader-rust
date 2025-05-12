@@ -3,6 +3,14 @@ name = "reader-rust"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "rust-reader"
+path = "src/main.rs"
+
+[lib]
+name = "readerlib"
+path = "src/lib.rs"
+
 [dependencies]
 egui = "0.31.1"
 zip = "2.6.1"
