@@ -1,11 +1,12 @@
 use std::io::Read;
 
+use xml::XMLComponent;
 use zip::ZipArchive;
 
-use crate::book::Book;
+use crate::book::{Book, BookItem};
 
 mod mimetype;
-mod xml;
+pub (crate) mod xml;
 
 pub fn construct(file_path: &str) -> Option<Book> {
     let file = std::fs::File::open(file_path).expect("Could not find file!");
@@ -13,9 +14,11 @@ pub fn construct(file_path: &str) -> Option<Book> {
 
     let mut rf_path = "".to_string();
 
+    let mut book = Book::new();
+
     for i in 0..zip.len() {
         let mut f = zip.by_index(i).unwrap();
-        println!("{:?}", f.name());
+        // println!("{:?}", f.name());
 
         if f.name() == "mimetype" {
             let mut buf: Vec<u8> = vec![];
@@ -37,8 +40,24 @@ pub fn construct(file_path: &str) -> Option<Book> {
             rf_path = rf_div.get_attr("full-path").expect(container_err_msg);
         } else if f.name() == rf_path.as_str() {
             // rootfile, yummy
+            let rootfile = xml::XML::from(&mut f);
+            let rootfile_err_msg = "Poorly constructed rootfile, cannot read manifest!";
+            let manifest = rootfile.get_div("package")
+                        .expect(rootfile_err_msg)
+                        .get_div("manifest")
+                        .expect(rootfile_err_msg);
+            for item in manifest.get_all_children() {
+                match item {
+                    XMLComponent::Div(div) => {
+                        let bi = BookItem::from(div);
+                        book.manifest.push(bi);
+                    },
+                    _ => { }
+                }
+            }
+
         }
     }
 
-    Some(Book { sections: vec![] })
+    Some(book)
 }

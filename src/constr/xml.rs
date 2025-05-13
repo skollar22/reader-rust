@@ -1,4 +1,4 @@
-use std::{collections::HashMap, error::Error, fmt, fs::File, hash::Hash, io::{Empty, Read}, str::Chars};
+use std::{collections::HashMap, error::Error, fmt, fs::File, io::Read, str::Chars};
 
 use zip::read::ZipFile;
 
