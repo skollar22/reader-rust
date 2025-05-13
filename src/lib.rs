@@ -1,5 +1,5 @@
 pub mod book;
-mod constr;
+pub mod constr;
 mod displ;
 
 fn hello() {
