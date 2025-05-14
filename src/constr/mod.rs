@@ -56,6 +56,8 @@ pub fn construct(file_path: &str) -> Option<Book> {
                 }
             }
 
+            println!("{:?}", rootfile.get_div("package").unwrap().get_div("metadata").unwrap())
+
         }
     }
 
