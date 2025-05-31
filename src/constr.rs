@@ -1,7 +1,6 @@
 use std::io::Read;
 
 use xml::XMLComponent;
-use zip::ZipArchive;
 
 use crate::book::{Book, BookItem};
 
@@ -9,12 +8,10 @@ mod mimetype;
 pub (crate) mod xml;
 
 pub fn construct(file_path: &str) -> Option<Book> {
-    let file = std::fs::File::open(file_path).expect("Could not find file!");
-    let mut zip = ZipArchive::new(file).expect("Error unzipping file!");
+    let mut book = Book::new(file_path);
+    let mut zip = book.get_zip();
 
     let mut rf_path = "".to_string();
-
-    let mut book = Book::new();
 
     for i in 0..zip.len() {
         let mut f = zip.by_index(i).unwrap();
@@ -55,6 +52,23 @@ pub fn construct(file_path: &str) -> Option<Book> {
                     _ => { }
                 }
             }
+
+            let spine_err_msg = "Poorly constructed rootfile, cannot find spine!";
+            let spine = rootfile.get_div("package")
+                        .expect(spine_err_msg)
+                        .get_div("spine")
+                        .expect(spine_err_msg);
+
+            for item in spine.get_all_children() {
+                match item {
+                    XMLComponent::Div(div) => {
+                        let bi = BookItem::from(div);
+                        book.manifest.push(bi);
+                    },
+                    _ => { }
+                }
+            }
+
 
             println!("{:?}", rootfile.get_div("package").unwrap().get_div("metadata").unwrap())
 

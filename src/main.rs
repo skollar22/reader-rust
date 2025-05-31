@@ -4,8 +4,10 @@ use eframe::egui;
 
 fn main() -> eframe::Result {
     println!("Hello, world!");
-    let book = readerlib::constr::construct("/home/sk/Documents/projects/reader-rust/01 - The Last Wish.epub").unwrap();
+    let book = readerlib::constr::construct("/home/sk/Documents/projects/reader-rust/way_of_kings.epub").unwrap();
     println!("{}", book);
+
+    println!("\n\ndone\n\n");
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
     let options = eframe::NativeOptions {
@@ -30,7 +32,7 @@ struct ReaderApp {
 
 impl Default for ReaderApp {
     fn default() -> Self {
-        let cla = std::env::args().nth(1).unwrap_or("/home/sk/Documents/projects/reader-rust/01 - The Last Wish.epub".to_string());
+        let cla = std::env::args().nth(1).unwrap_or("/home/sk/Documents/projects/reader-rust/way_of_kings.epub".to_string());
         Self {
             book: constr::construct(&cla),
         }
